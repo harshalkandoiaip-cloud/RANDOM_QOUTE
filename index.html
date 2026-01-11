@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Quote Generator</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f5f5f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      color: #1d1d1f;
+    }
+    .card {
+      background: white;
+      padding: 32px;
+      border-radius: 20px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .quote {
+      font-size: 1.5rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .author {
+      font-size: 1rem;
+      color: #6e6e73;
+      margin-bottom: 28px;
+    }
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 28px;
+      font-size: 1rem;
+      background: #0071e3;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    button:hover {
+      background: #005bb5;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="quote" class="quote">Loading…</div>
+    <div id="author" class="author"></div>
+    <button id="refresh">New Quote</button>
+  </div>
+
+  <script>
+    const QUOTE_URL = "https://dummyjson.com/quotes/random";
+
+    const quoteEl = document.getElementById("quote");
+    const authorEl = document.getElementById("author");
+    const refreshBtn = document.getElementById("refresh");
+
+    async function fetchQuote() {
+      quoteEl.textContent = "Fetching quote…";
+      authorEl.textContent = "";
+
+      try {
+        const response = await fetch(QUOTE_URL);
+        if (!response.ok) throw new Error("Network error");
+
+        const data = await response.json();
+
+        // Validation step
+        if (!data.quote || !data.author) {
+          throw new Error("Invalid quote format");
+        }
+
+        quoteEl.textContent = `“${data.quote}”`;
+        authorEl.textContent = `— ${data.author}`;
+
+      } catch (error) {
+        console.error(error);
+        quoteEl.textContent = "Unable to load quote. Please try again.";
+        authorEl.textContent = "";
+      }
+    }
+
+    refreshBtn.addEventListener("click", fetchQuote);
+
+    // Initial fetch
+    fetchQuote();
+  </script>
+</body>
+</html>
